@@ -19,7 +19,7 @@ Each action is a vector with four numbers, corresponding to torque applicable to
 ### Project Details
 
 This version of the Unity environment contains 20 identical agents.
-The agents are trained to get an average score of +30 (over 100 consecutive episodes, and over all agents).
+The agents are trained using [PPO](https://arxiv.org/pdf/1707.06347.pdf) to get an average score of +30 (over 100 consecutive episodes, and over all agents).
 
   Specifically,
 - After each episode, we add up the rewards that each agent received (without discounting), to get a score for each agent.  This yields 20 (potentially different) scores.  We then take the average of these 20 scores. 
