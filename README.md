@@ -72,7 +72,6 @@ python -m ipykernel install --user --name PromixalPolicyOptimization --display-n
 ```
 5. Before running code in a notebook, change the kernel to match the `PromixalPolicyOptimization` environment by using the drop-down `Kernel` menu. 
 
-![Kernel](./change_kernel.png)
 
 6. Open [the notebook Report.ipynb](./Report.ipynb) and execute each cell to train an agent using Deep Q-Learning with a Dueling network.
 
