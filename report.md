@@ -122,3 +122,12 @@ To improve the agents performance
 - try different network architectures, maybe an LSTM
 - investigate different initialization schemes for the neural networks
 - try some ideas from [PPO-CMA: Proximal Policy Optimization with Covariance Matrix Adaptation](https://arxiv.org/abs/1810.02541v5)
+
+## Resources that helped me implement this project
+
+[higgsfields RL-Adventure-2](https://github.com/higgsfield/RL-Adventure-2/blob/master/3.ppo.ipynb)
+[OpenAI Blog post](https://openai.com/blog/openai-baselines-ppo/)
+[PPO with Sonic the Hedgehog](https://towardsdatascience.com/proximal-policy-optimization-ppo-with-sonic-the-hedgehog-2-and-3-c9c21dbed5e)
+[OpenAI Spinning AI Docs on PPO](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+[Deep Reinforcement Learning in Action, chapter 'Policy Gradient Methods'](https://www.manning.com/books/deep-reinforcement-learning-in-action)
+
