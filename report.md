@@ -117,7 +117,8 @@ Scores of last 100 episodes and moving average of all episodes.
 ![results](assets/plot_last100_and_avg.png)
 
 ## Next steps
-- try out different environments and see, how PPO behaves, especially I'd like to see, how PPO works with TORCS
-- upgrade to Pytorch 1.0 and see how Torchscript helps speeding up the training.
-- implement c51 and compare how hard it is to get working in comparison to PPO.
-
+To improve the agents performance
+- train longer
+- try different network architectures, maybe an LSTM
+- investigate different initialization schemes for the neural networks
+- try some ideas from [PPO-CMA: Proximal Policy Optimization with Covariance Matrix Adaptation](https://arxiv.org/abs/1810.02541v5)
