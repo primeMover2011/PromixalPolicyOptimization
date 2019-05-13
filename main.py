@@ -48,23 +48,8 @@ def plot(scores=[], ylabel="Scores", xlabel="Episode #", title="", text=""):
 def main():
     os.environ['NO_PROXY'] = 'localhost,127.0.0.*'
 
-    # Hyper params:
-    hidden_size = 256
-    lr = 3e-4
-    num_steps = 2048
-    mini_batch_size = 512
-    ppo_epochs = 3
-    threshold_reward = 10
-    max_episodes = 15  # 1e5
-    episode = 0
-    nrmlz_adv = True
-    test_mean_reward = 1.
-
-
     scores = [
 
-#    run_experiment(hidden_size=256, lr=1e-3, max_episodes=500, mini_batch_size=256,
-#                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=3, clip_gradients=True),
     run_experiment(hidden_size=256, lr=1e-3, max_episodes=500, mini_batch_size=128,
                    nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=30,
                    gamma=0.99, tau=0.95, clip_gradients=True)
@@ -104,9 +89,7 @@ def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_
     '''
 
     use_cuda = torch.cuda.is_available()
-    #    device   = torch.device("cuda" if use_cuda else "cpu")
-    device = torch.device("cpu")
-    print(device)
+    device   = torch.device("cuda" if use_cuda else "cpu")
     scores_window = deque(maxlen=100)
     test_rewards = []
     moving_averages = []

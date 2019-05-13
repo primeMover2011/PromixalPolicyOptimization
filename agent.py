@@ -3,14 +3,6 @@ import torch.optim as optim
 import torch.nn as nn
 from network import PPOActorCritic
 
-from IPython.display import clear_output
-import matplotlib.pyplot as plt
-from collections import deque
-import os
-from tqdm import tqdm
-import datetime
-
-from unityagents import UnityEnvironment
 import numpy as np
 
 class PPOAgent():
@@ -38,13 +30,17 @@ class PPOAgent():
 
         pass
 
-    def act(self, state):
+    def act(self, state, train=True):
+
+        if train:
+            self.ppo_model.train()
+        else:
+            self.ppo_model.eval()
         state = torch.FloatTensor(state).to(self.device)
-    #    dist, value = self.ppo_model(state)
         dist, value = self.ppo_model(state)
         action = dist.sample()
         log_prob = dist.log_prob(action).sum(dim=1, keepdim=True)
-        #log_prob = torch.sum(log_prob, dim=1, keepdim=True)
+
 
         return action, value, log_prob
 
@@ -72,7 +68,9 @@ class PPOAgent():
         torch.save(self.ppo_model.state_dict(), file_name)
 
     def load_model(self, file_name):
-        pass
+        checkpoint = torch.load(file_name, map_location=torch.device('cpu'))
+        self.ppo_model.load_state_dict(checkpoint)
+        #self.optimizer.load_state_dict(checkpoint['optimizer'])
 
 
     def sample(self, states, actions, log_probs, returns, advantage):

@@ -1,14 +1,11 @@
-[//]: # (Image References)
-
-[image1]: https://user-images.githubusercontent.com/10624937/43851024-320ba930-9aff-11e8-8493-ee547c6af349.gif "Trained Agent"
 
 # Continuous Control using Proximal Policy Optimization 
 
 ### Introduction
 
-For this project, you will work with the [Reacher](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#reacher) environment.
+For this project, we will work with the [Reacher](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#reacher) environment.
 
-![Trained Agent][image1]
+![Trained Agent](assets/trained_agents.gif)
 
 In this environment, a double-jointed arm can move to target locations. A reward of +0.1 is provided for each step that the agent's hand is in the goal location. Thus, the goal of your agent is to maintain its position at the target location for as many time steps as possible.
 
@@ -66,16 +63,39 @@ activate the environment using
 conda activate PromixalPolicyOptimization
 ```
 
-6. Create an [IPython kernel](http://ipython.readthedocs.io/en/stable/install/kernel_install.html) for the `PromixalPolicyOptimization` environment.  
-```bash
-python -m ipykernel install --user --name PromixalPolicyOptimization --display-name "PromixalPolicyOptimization"
+update the location of the environment in _main.py_ and in _test.py_
+
+```python
+    env = UnityEnvironment(file_name='YOUR_PATH_HERE', base_port=64739)
 ```
-5. Before running code in a notebook, change the kernel to match the `PromixalPolicyOptimization` environment by using the drop-down `Kernel` menu. 
+
+6. Watch the pretrained agent.
+
+```python
+  python test.py
+```
 
 
-6. Open [the notebook Report.ipynb](./Report.ipynb) and execute each cell to train an agent using Deep Q-Learning with a Dueling network.
+7. Train your own agent using default parameters. 
 
-Enjoy!
+```python
+  python main.py
+```
+
+8. Read [the report] and play around with the code. Best starting point is defining your own experiments using some changes in hyper parameters.
+
+_in main.py_ change
+```python
+    scores = [
+
+    run_experiment(hidden_size=256, lr=1e-3, max_episodes=500, mini_batch_size=128,
+                   nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=30,
+                   gamma=0.99, tau=0.95, clip_gradients=True)
+    ]
+```
+
+
+# Enjoy!
 
 
 
