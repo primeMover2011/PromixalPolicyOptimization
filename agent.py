@@ -16,7 +16,8 @@ import numpy as np
 class PPOAgent():
 
     def __init__(self, learning_rate, state_size, action_size, hidden_size,
-                 num_agents, random_seed, ppo_epochs, mini_batch_size, normalize_advantages, clip_gradients, device):
+                 num_agents, random_seed, ppo_epochs, mini_batch_size, normalize_advantages, clip_gradients,
+                 gamma, tau, device):
         self.device = device
         self.state_size = state_size
         self.action_size = action_size
@@ -27,6 +28,8 @@ class PPOAgent():
         self.mini_batch_size = mini_batch_size
         self.nrmlz_adv = normalize_advantages
         self.clip_gradients = clip_gradients
+        self.gamma = gamma
+        self.tau = tau
 
         self.ppo_model = PPOActorCritic(num_inputs = state_size,
                                         num_outputs = action_size,
@@ -50,8 +53,6 @@ class PPOAgent():
         returns = self.compute_gaes(next_value, rewards, masks, values)
 
         returns = torch.cat(returns).detach()
-        mean2 = torch.mean(returns)
-        print("Returns: ", mean2)
         log_probs = torch.cat(log_probs).detach()
         values = torch.cat(values).detach()
 
@@ -61,7 +62,6 @@ class PPOAgent():
         if self.nrmlz_adv:
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-        losses = []
         clip_param = 0.2
         self.learn(states=states, actions=actions, log_probs=log_probs,
                    returns=returns, advantages=advantages, clip_param=clip_param)
@@ -69,7 +69,7 @@ class PPOAgent():
 
 
     def save_model(self, file_name):
-        torch.save(self.ppo_modelppomodel.state_dict(), file_name)
+        torch.save(self.ppo_model.state_dict(), file_name)
 
     def load_model(self, file_name):
         pass
@@ -112,12 +112,12 @@ class PPOAgent():
                 self.optimizer.step()
 
 
-    def compute_gaes(self, next_value, rewards, masks, values, gamma=0.99, tau=0.95):
+    def compute_gaes(self, next_value, rewards, masks, values):
         values = values + [next_value]
         advantage = 0
         returns = []
         for step in reversed(range(len(rewards))):
-            td_error = rewards[step] + gamma * values[step + 1] * masks[step] - values[step]
-            advantage = advantage * tau * gamma * masks[step] + td_error
+            td_error = rewards[step] + self.gamma * values[step + 1] * masks[step] - values[step]
+            advantage = advantage * self.tau * self.gamma * masks[step] + td_error
             returns.insert(0, advantage + values[step])
         return returns

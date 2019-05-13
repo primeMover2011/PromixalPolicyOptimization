@@ -63,27 +63,22 @@ def main():
 
     scores = [
 
-#    run_experiment(hidden_size=256, lr=1e-3, max_episodes=30, mini_batch_size=512,
-#                                                   nrmlz_adv=False, num_steps=2048, ppo_epochs=4, threshold_reward=20),
+#   fastest learner
+#    run_experiment(hidden_size=256, lr=5e-4, max_episodes=500, mini_batch_size=256,
+#                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=3, clip_gradients=True),
 
-
-    run_experiment(hidden_size=256, lr=1e-3, max_episodes=200, mini_batch_size=128,
-                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=30, clip_gradients=True),
-
-    run_experiment(hidden_size=256, lr=1e-3, max_episodes=30, mini_batch_size=32,
-                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=20, clip_gradients=True),
-
-    run_experiment(hidden_size=256, lr=1e-3, max_episodes=30, mini_batch_size=128,
-                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=20, clip_gradients=False)
+    run_experiment(hidden_size=256, lr=1e-4, max_episodes=20, mini_batch_size=512,
+                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=3,
+                   gamma=0.99, tau = 0.95, clip_gradients=False)
     ]
     plot([x[0] for x in scores], "Scores")
 
 
-def run_experiment(hidden_size, lr, max_episodes, mini_batch_size, nrmlz_adv, num_steps, ppo_epochs, threshold_reward, clip_gradients):
+def run_experiment(hidden_size, lr, max_episodes, mini_batch_size, nrmlz_adv, num_steps, ppo_epochs, threshold_reward, gamma, tau, clip_gradients):
     scores_window, test_rewards = experiment(hidden_size=hidden_size, lr=lr, num_steps=num_steps,
                                              mini_batch_size=mini_batch_size, ppo_epochs=ppo_epochs,
                                              threshold_reward=threshold_reward, max_episodes=max_episodes,
-                                             nrmlz_adv=nrmlz_adv, clip_gradients=clip_gradients)
+                                             nrmlz_adv=nrmlz_adv, clip_gradients=clip_gradients, gamma=gamma, tau=tau)
 
 
     test_mean_reward = np.mean(test_rewards)
@@ -94,7 +89,7 @@ def run_experiment(hidden_size, lr, max_episodes, mini_batch_size, nrmlz_adv, nu
 
 
 def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_epochs=10, threshold_reward=10,
-               max_episodes=15, nrmlz_adv=True, clip_gradients=True):
+               max_episodes=15, nrmlz_adv=True, gamma=0.99, tau=0.95,  clip_gradients=True):
     '''
 
     :param hidden_size: number of neurons for the layers of the model
@@ -130,7 +125,8 @@ def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_
 
     agent = PPOAgent(learning_rate=lr, state_size=state_size, action_size=action_size, hidden_size=hidden_size,
                      num_agents=num_agents, random_seed=0, ppo_epochs=ppo_epochs,
-                     mini_batch_size=mini_batch_size, normalize_advantages=nrmlz_adv, clip_gradients= clip_gradients, device=device)
+                     mini_batch_size=mini_batch_size, normalize_advantages=nrmlz_adv,
+                     clip_gradients= clip_gradients, gamma=gamma, tau=tau, device=device)
 
 
     #    while episode < max_episodes and not early_stop:
