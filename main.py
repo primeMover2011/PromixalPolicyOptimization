@@ -63,19 +63,18 @@ def main():
 
     scores = [
 
-#   fastest learner
-#    run_experiment(hidden_size=256, lr=5e-4, max_episodes=500, mini_batch_size=256,
+#    run_experiment(hidden_size=256, lr=1e-3, max_episodes=500, mini_batch_size=256,
 #                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=3, clip_gradients=True),
+    run_experiment(hidden_size=256, lr=1e-3, max_episodes=500, mini_batch_size=128,
+                   nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=30,
+                   gamma=0.99, tau=0.95, clip_gradients=True)
 
-    run_experiment(hidden_size=256, lr=1e-4, max_episodes=20, mini_batch_size=512,
-                                                      nrmlz_adv=True, num_steps=2048, ppo_epochs=4, threshold_reward=3,
-                   gamma=0.99, tau = 0.95, clip_gradients=False)
     ]
     plot([x[0] for x in scores], "Scores")
 
 
 def run_experiment(hidden_size, lr, max_episodes, mini_batch_size, nrmlz_adv, num_steps, ppo_epochs, threshold_reward, gamma, tau, clip_gradients):
-    scores_window, test_rewards = experiment(hidden_size=hidden_size, lr=lr, num_steps=num_steps,
+    scores_window, test_rewards, moving_averages = experiment(hidden_size=hidden_size, lr=lr, num_steps=num_steps,
                                              mini_batch_size=mini_batch_size, ppo_epochs=ppo_epochs,
                                              threshold_reward=threshold_reward, max_episodes=max_episodes,
                                              nrmlz_adv=nrmlz_adv, clip_gradients=clip_gradients, gamma=gamma, tau=tau)
@@ -84,8 +83,8 @@ def run_experiment(hidden_size, lr, max_episodes, mini_batch_size, nrmlz_adv, nu
     test_mean_reward = np.mean(test_rewards)
     text = "\n".join([f"HS:{hidden_size} lr:{lr} st:{num_steps} batch:{mini_batch_size} ppo:{ppo_epochs}",
                       f" r:{threshold_reward} e:{max_episodes} adv:{nrmlz_adv} mean {test_mean_reward}"])
-    plot([scores_window], "Last # Scores", text=text)
-    return scores_window, test_rewards
+    plot([scores_window, moving_averages], "Last # Scores, Moving Averages", text=text)
+    return scores_window, test_rewards, moving_averages
 
 
 def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_epochs=10, threshold_reward=10,
@@ -109,8 +108,8 @@ def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_
     device = torch.device("cpu")
     print(device)
     scores_window = deque(maxlen=100)
-
     test_rewards = []
+    moving_averages = []
 
     env = UnityEnvironment(file_name='reacher20/reacher', base_port=64739)
     # get the default brain
@@ -173,6 +172,7 @@ def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_
         test_mean_reward = test_agent(env, brain_name, agent, device)
         test_rewards.append(test_mean_reward)
         scores_window.append(test_mean_reward)
+        moving_averages.append(np.mean(scores_window))
         print('Episode {}, Total score this episode: {}, Last {} average: {}'.format(episode, test_mean_reward,
                                                                                      min(episode, 100),
                                                                                      np.mean(scores_window)))
@@ -183,7 +183,7 @@ def experiment(hidden_size=64, lr=3e-4, num_steps=2048, mini_batch_size=32, ppo_
 
         episode += 1
     env.close()
-    return scores_window, test_rewards
+    return scores_window, test_rewards, moving_averages
 
 if __name__ == "__main__":
     main()
